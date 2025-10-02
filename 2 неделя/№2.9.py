@@ -1,6 +1,6 @@
 from itertools import count
 
-with open('text2n9', 'r') as f:
+with open('text2.9', 'r') as f:
     t = "".join(f.readlines())
 
 l = ['.', '!', '?']
