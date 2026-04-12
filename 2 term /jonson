@@ -1,0 +1,82 @@
+import sys
+import heapq
+
+input = sys.stdin.readline
+
+
+def bf(n, e, s):
+    d = [10**18] * n
+    d[s] = 0
+
+    for _ in range(n - 1):
+        any_change = False
+        for a, b, w in e:
+            if d[a] < 10**18 and d[b] > d[a] + w:
+                d[b] = d[a] + w
+                any_change = True
+        if not any_change:
+            break
+
+    for a, b, w in e:
+        if d[a] < 10**18 and d[b] > d[a] + w:
+            return None
+
+    return d
+
+
+def dijk(n, g, s):
+    d = [10**18] * n
+    d[s] = 0
+    q = [(0, s)]
+
+    while q:
+        dist, v = heapq.heappop(q)
+        if dist != d[v]:
+            continue
+        for to, w in g[v]:
+            nd = dist + w
+            if nd < d[to]:
+                d[to] = nd
+                heapq.heappush(q, (nd, to))
+
+    return d
+
+
+def solve(n, edges):
+    s = n
+    e = edges + [(s, i, 0) for i in range(n)]
+
+    h = bf(n + 1, e, s)
+    if h is None:
+        return None
+
+    g = [[] for _ in range(n)]
+    for a, b, w in edges:
+        g[a].append((b, w + h[a] - h[b]))
+
+    res = []
+    for i in range(n):
+        d = dijk(n, g, i)
+        for j in range(n):
+            if d[j] < 10**18:
+                d[j] = d[j] - h[i] + h[j]
+        res.append(d)
+
+    return res
+
+
+n, m = map(int, input().split())
+edges = []
+
+for _ in range(m):
+    a, b, w = map(int, input().split())
+    edges.append((a - 1, b - 1, w))
+
+
+ans = solve(n, edges)
+
+if ans is None:
+    print("Есть отрицательный цикл")
+else:
+    for row in ans:
+        print(*row)
