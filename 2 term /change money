@@ -1,0 +1,33 @@
+import sys
+import math
+
+input = sys.stdin.readline
+
+
+def f(n, e):
+    d = [0.0] * n
+
+    for _ in range(n - 1):
+        for a, b, w in e:
+            if d[b] > d[a] + w:
+                d[b] = d[a] + w
+
+    for a, b, w in e:
+        if d[b] > d[a] + w:
+            return 1
+
+    return 0
+
+
+n, m = map(int, input().split())
+e = []
+
+for _ in range(m):
+    a, b, r = input().split()
+    e.append((int(a) - 1, int(b) - 1, -math.log(float(r))))
+
+
+if f(n, e):
+    print("YES")
+else:
+    print("NO")
